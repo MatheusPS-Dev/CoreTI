@@ -1,0 +1,12 @@
+# Habilitar reescrita de URL apenas se necessário, sem afetar caminhos diretos
+# O site agora chama os arquivos .php diretamente para evitar bloqueios de WAF/Cloudflare
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /api/
+</IfModule>
+
+# Bloquear acesso direto ao config.php
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>

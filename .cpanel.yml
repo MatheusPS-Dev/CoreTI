@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home1/mat06156/informatica.klenus.com.br/
-    - /bin/rsync -avz --exclude '.git*' ./ $DEPLOYPATH
+    - /bin/rsync -avz --exclude '.git*' --exclude 'index.html' --exclude 'compile_html.py' ./ $DEPLOYPATH

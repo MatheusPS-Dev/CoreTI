@@ -1,5 +1,5 @@
 # Definir o documento padrao
-DirectoryIndex index.html
+DirectoryIndex index.php
 
 # Proteger arquivos sensiveis (bloquear acesso direto)
 <FilesMatch "\.(env|sql|md|json|lock)$">

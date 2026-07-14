@@ -1,13 +1,17 @@
-// database.js - Camada de Dados (Dual-Mode: LocalStorage / API PHP+MySQL)
+// api.js - Camada de Dados (Dual-Mode: LocalStorage / API PHP+MySQL)
+// ==================================================================
 
 // Detecta automaticamente o modo de operação:
-// - Via http/https (hospedagem): usa API PHP conectada ao MySQL
-// - Via file:// (local): usa LocalStorage do navegador como fallback
-const USE_API = window.location.protocol.startsWith('http');
+// - Via http/https (hospedagem remota): usa API PHP conectada ao MySQL
+// - Via localhost ou file:// (local): usa LocalStorage do navegador como fallback
+// Nota: para testar a API PHP/MySQL no localhost, acesse a URL com o parâmetro '?api=true' (ex: http://localhost:8000/?api=true)
+const isLocalhost = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1');
+const forceAPI = window.location.search.includes('api=true');
+const USE_API = window.location.protocol.startsWith('http') && (!isLocalhost || forceAPI);
 
 // Calcula dinamicamente o caminho da API base
 let basePath = window.location.pathname;
-if (basePath.endsWith('.html') || basePath.split('/').pop().includes('.')) {
+if (basePath.endsWith('.html') || basePath.endsWith('.php') || basePath.split('/').pop().includes('.')) {
     const parts = basePath.split('/');
     parts.pop();
     basePath = parts.join('/');
@@ -117,7 +121,7 @@ async function apiRequest(url, options = {}) {
 }
 
 // Objeto de Operações no Banco de Dados
-const db = {
+export const db = {
     // --- MODO ATIVO ---
     isUsingAPI: function() {
         return USE_API;

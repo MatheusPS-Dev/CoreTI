@@ -5,3 +5,4 @@ api/auth.zip
 *.log
 index.html
 compile_html.py
+setup_local_db.sql

@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home1/mat06156/informatica.klenus.com.br/
+    - /bin/rsync -avz --exclude '.git*' ./ $DEPLOYPATH

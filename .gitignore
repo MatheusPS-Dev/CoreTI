@@ -3,6 +3,3 @@ api/error_log
 api/auth.zip
 *.zip
 *.log
-index.html
-compile_html.py
-setup_local_db.sql

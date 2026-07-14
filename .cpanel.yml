@@ -2,9 +2,6 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home1/mat06156/informatica.klenus.com.br/
-    - /bin/rsync -avz --chmod=D755,F644 --exclude '.git*' --exclude 'index.html' --exclude 'compile_html.py' --exclude 'setup_local_db.sql' ./ $DEPLOYPATH
-    - rm -f $DEPLOYPATH/index.html
-    - rm -f $DEPLOYPATH/app.js
-    - rm -f $DEPLOYPATH/database.js
+    - /bin/rsync -avz --chmod=D755,F644 --exclude '.git*' ./ $DEPLOYPATH
     - find $DEPLOYPATH -type d -exec chmod 755 {} +
     - find $DEPLOYPATH -type f -exec chmod 644 {} +

@@ -48,7 +48,7 @@ try {
             data DATE NOT NULL,
             horario VARCHAR(10) NOT NULL,
             responsavel VARCHAR(255) NOT NULL,
-            observacoes TEXT DEFAULT \'\',
+            observacoes TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (id_impressora) REFERENCES impressoras(id) ON DELETE RESTRICT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci

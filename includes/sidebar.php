@@ -14,6 +14,9 @@
             <a href="#" class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-colors" data-target="impressoras">
                 <span class="material-symbols-outlined" style="font-size:20px">print</span> Impressoras
             </a>
+            <a href="#" class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-colors" data-target="estoque">
+                <span class="material-symbols-outlined" style="font-size:20px">inventory_2</span> Estoque
+            </a>
             <a href="#" class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-colors" data-target="departamentos">
                 <span class="material-symbols-outlined" style="font-size:20px">corporate_fare</span> Departamentos
             </a>

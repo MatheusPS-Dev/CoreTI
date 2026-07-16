@@ -60,14 +60,35 @@ try {
         $item['id'] = (int)$item['id'];
     }
 
-    // 5. Retornar todas as métricas
+    // 5. Itens com estoque baixo
+    $lowStockItems = [];
+    try {
+        $stmtStock = $db->query('
+            SELECT id, nome, quantidade, quantidade_minima, categoria
+            FROM estoque
+            WHERE quantidade <= quantidade_minima
+            ORDER BY quantidade ASC
+        ');
+        $lowStockItems = $stmtStock->fetchAll();
+        foreach ($lowStockItems as &$item) {
+            $item['id'] = (int)$item['id'];
+            $item['quantidade'] = (int)$item['quantidade'];
+            $item['quantidade_minima'] = (int)$item['quantidade_minima'];
+        }
+    } catch (Exception $e) {
+        // Tabela estoque pode não existir ainda
+        $lowStockItems = [];
+    }
+
+    // 6. Retornar todas as métricas
     jsonResponse([
         'totalExchanges'    => $totalExchanges,
         'totalPrinters'     => $totalPrinters,
         'totalDepartments'  => $totalDepartments,
         'exchangesByDept'   => $exchangesByDept,
         'exchangesByPrinter'=> $exchangesByPrinter,
-        'recentExchanges'   => $recentExchanges
+        'recentExchanges'   => $recentExchanges,
+        'lowStockItems'     => $lowStockItems
     ]);
 
 } catch (Exception $e) {

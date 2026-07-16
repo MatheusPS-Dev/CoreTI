@@ -16,6 +16,9 @@
                 <a href="#" class="menu-item h-full flex items-center px-4 font-label-sm text-label-sm text-surface-variant hover:text-primary-fixed-dim transition-colors duration-150" data-target="impressoras">
                     <span>Impressoras</span>
                 </a>
+                <a href="#" class="menu-item h-full flex items-center px-4 font-label-sm text-label-sm text-surface-variant hover:text-primary-fixed-dim transition-colors duration-150" data-target="estoque">
+                    <span>Estoque</span>
+                </a>
                 <a href="#" class="menu-item h-full flex items-center px-4 font-label-sm text-label-sm text-surface-variant hover:text-primary-fixed-dim transition-colors duration-150" data-target="departamentos">
                     <span>Departamentos</span>
                 </a>

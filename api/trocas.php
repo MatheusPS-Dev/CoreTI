@@ -32,9 +32,35 @@ switch ($method) {
             jsonResponse(['error' => 'Impressora, Data, Horário e Responsável são obrigatórios.'], 400);
         }
 
+        // Buscar o modelo de toner associado à impressora para dar baixa automática no estoque
+        $printerStmt = $db->prepare('SELECT modelo_toner FROM impressoras WHERE id = ?');
+        $printerStmt->execute([$id_impressora]);
+        $printer = $printerStmt->fetch();
+
         $stmt = $db->prepare('INSERT INTO trocas (id_impressora, data, horario, responsavel, observacoes) VALUES (?, ?, ?, ?, ?)');
         $stmt->execute([$id_impressora, $data, $horario, $responsavel, $observacoes]);
         $newId = (int)$db->lastInsertId();
+
+        if ($printer) {
+            $modelo_toner = trim($printer['modelo_toner']);
+            if (!empty($modelo_toner)) {
+                // Tenta achar o item do estoque correspondente (busca exata ou aproximada)
+                $estoqueStmt = $db->prepare('
+                    SELECT id, quantidade 
+                    FROM estoque 
+                    WHERE nome = ? OR nome LIKE ? OR ? LIKE CONCAT("%", nome, "%") 
+                    LIMIT 1
+                ');
+                $estoqueStmt->execute([$modelo_toner, '%' . $modelo_toner . '%', $modelo_toner]);
+                $estoqueItem = $estoqueStmt->fetch();
+
+                if ($estoqueItem) {
+                    $newQty = max(0, intval($estoqueItem['quantidade']) - 1);
+                    $updateEstoque = $db->prepare('UPDATE estoque SET quantidade = ? WHERE id = ?');
+                    $updateEstoque->execute([$newQty, $estoqueItem['id']]);
+                }
+            }
+        }
 
         jsonResponse([
             'id' => $newId,

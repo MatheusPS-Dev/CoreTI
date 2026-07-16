@@ -11,6 +11,9 @@
                 </button>
             </div>
 
+            <!-- Low Stock Alerts -->
+            <div id="low-stock-alert-container" class="mb-6 hidden"></div>
+
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-lg mb-10">
                 <div class="bg-surface-container-lowest border border-surface-dim rounded-xl p-6 flex flex-col relative overflow-hidden group">

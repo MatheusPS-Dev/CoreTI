@@ -6,6 +6,27 @@ import { formatDateBR } from '../utils.js';
 
 /** Renderiza todo o conteúdo do Dashboard */
 export function renderDashboard() {
+    // 0. Alertas de estoque baixo
+    if (DOM.lowStockAlertContainer) {
+        const lowStockItems = (state.estoque || []).filter(item => item.quantidade <= item.quantidade_minima);
+        if (lowStockItems.length > 0) {
+            DOM.lowStockAlertContainer.classList.remove('hidden');
+            DOM.lowStockAlertContainer.innerHTML = lowStockItems.map(item => `
+                <div class="bg-error-container text-on-error-container p-4 rounded-xl flex items-center gap-3 border border-error/20 mb-2">
+                    <span class="material-symbols-outlined" style="font-size:22px">warning</span>
+                    <div class="flex-1">
+                        <span class="font-semibold">${item.nome}</span>
+                        <span class="text-sm"> — Restam <strong>${item.quantidade}</strong> un. (mínimo: ${item.quantidade_minima})</span>
+                    </div>
+                    <span class="px-2.5 py-1 bg-error/15 text-xs font-semibold rounded-full">${item.quantidade === 0 ? 'Esgotado' : 'Baixo Estoque'}</span>
+                </div>
+            `).join('');
+        } else {
+            DOM.lowStockAlertContainer.classList.add('hidden');
+            DOM.lowStockAlertContainer.innerHTML = '';
+        }
+    }
+
     // 1. Atualizar cards numéricos
     DOM.statTotalExchanges.textContent = state.stats.totalExchanges;
     DOM.statTotalPrinters.textContent = state.stats.totalPrinters;

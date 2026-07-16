@@ -53,6 +53,15 @@ const INITIAL_USERS = [
     { id: 2, usuario: 'tecnico', nome: 'Técnico de Suporte', nivel: 'user' }
 ];
 
+const INITIAL_ESTOQUE = [
+    { id: 1, nome: 'Toner CF258X (58X)', quantidade: 5, quantidade_minima: 2, categoria: 'Toner' },
+    { id: 2, nome: 'Toner TN760', quantidade: 1, quantidade_minima: 2, categoria: 'Toner' },
+    { id: 3, nome: 'Papel A4 (Resma)', quantidade: 10, quantidade_minima: 5, categoria: 'Papel' },
+    { id: 4, nome: 'Toner 51B4000', quantidade: 0, quantidade_minima: 3, categoria: 'Toner' },
+    { id: 5, nome: 'Toner MLT-D111S', quantidade: 8, quantidade_minima: 2, categoria: 'Toner' },
+    { id: 6, nome: 'Toner TK-1175', quantidade: 3, quantidade_minima: 2, categoria: 'Toner' }
+];
+
 // Utilitários de Inicialização do LocalStorage
 function initLocalStorage() {
     if (!localStorage.getItem('toner_departamentos')) {
@@ -66,6 +75,9 @@ function initLocalStorage() {
     }
     if (!localStorage.getItem('toner_usuarios')) {
         localStorage.setItem('toner_usuarios', JSON.stringify(INITIAL_USERS));
+    }
+    if (!localStorage.getItem('toner_estoque')) {
+        localStorage.setItem('toner_estoque', JSON.stringify(INITIAL_ESTOQUE));
     }
 }
 
@@ -397,6 +409,26 @@ export const db = {
             // Ordenar por data decrescente
             exchanges.sort((a, b) => new Date(b.data + 'T' + b.horario) - new Date(a.data + 'T' + a.horario));
             localStorage.setItem('toner_historico', JSON.stringify(exchanges));
+
+            // Atualizar estoque local automaticamente
+            const printers = JSON.parse(localStorage.getItem('toner_impressoras') || '[]');
+            const printer = printers.find(p => p.id === parseInt(exchange.id_impressora));
+            if (printer && printer.modelo_toner) {
+                const estoque = JSON.parse(localStorage.getItem('toner_estoque') || '[]');
+                const tonerModel = printer.modelo_toner.toLowerCase().trim();
+                
+                // Procurar por match aproximado no estoque
+                const stockItem = estoque.find(item => {
+                    const itemName = item.nome.toLowerCase();
+                    return itemName.includes(tonerModel) || tonerModel.includes(itemName);
+                });
+                
+                if (stockItem) {
+                    stockItem.quantidade = Math.max(0, (parseInt(stockItem.quantidade) || 0) - 1);
+                    localStorage.setItem('toner_estoque', JSON.stringify(estoque));
+                }
+            }
+
             return newExchange;
         }
     },
@@ -410,6 +442,82 @@ export const db = {
             const exchanges = JSON.parse(localStorage.getItem('toner_historico'));
             const filtered = exchanges.filter(e => e.id !== parseInt(id));
             localStorage.setItem('toner_historico', JSON.stringify(filtered));
+            return { success: true };
+        }
+    },
+
+    // --- ESTOQUE ---
+    getEstoque: async function() {
+        if (USE_API) {
+            try {
+                return await apiRequest(`${API_BASE}/estoque.php`);
+            } catch (error) {
+                console.error("Erro na API de estoque, usando LocalStorage como fallback", error);
+                initLocalStorage();
+                return JSON.parse(localStorage.getItem('toner_estoque'));
+            }
+        } else {
+            return JSON.parse(localStorage.getItem('toner_estoque') || '[]');
+        }
+    },
+
+    addEstoque: async function(item) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/estoque.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+        } else {
+            const items = JSON.parse(localStorage.getItem('toner_estoque') || '[]');
+            const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+            const newItem = {
+                id: newId,
+                nome: item.nome,
+                quantidade: parseInt(item.quantidade) || 0,
+                quantidade_minima: parseInt(item.quantidade_minima) || 2,
+                categoria: item.categoria || ''
+            };
+            items.push(newItem);
+            localStorage.setItem('toner_estoque', JSON.stringify(items));
+            return newItem;
+        }
+    },
+
+    updateEstoque: async function(id, item) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/estoque.php?id=${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+        } else {
+            const items = JSON.parse(localStorage.getItem('toner_estoque') || '[]');
+            const index = items.findIndex(i => i.id === parseInt(id));
+            if (index !== -1) {
+                items[index] = {
+                    id: parseInt(id),
+                    nome: item.nome,
+                    quantidade: parseInt(item.quantidade) || 0,
+                    quantidade_minima: parseInt(item.quantidade_minima) || 2,
+                    categoria: item.categoria || ''
+                };
+                localStorage.setItem('toner_estoque', JSON.stringify(items));
+                return items[index];
+            }
+            throw new Error("Item não encontrado no estoque");
+        }
+    },
+
+    deleteEstoque: async function(id) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/estoque.php?id=${id}`, {
+                method: 'DELETE'
+            });
+        } else {
+            const items = JSON.parse(localStorage.getItem('toner_estoque') || '[]');
+            const filtered = items.filter(i => i.id !== parseInt(id));
+            localStorage.setItem('toner_estoque', JSON.stringify(filtered));
             return { success: true };
         }
     },
@@ -490,13 +598,18 @@ export const db = {
             };
         });
 
+        // 8. Itens com estoque baixo
+        const estoque = await this.getEstoque();
+        const lowStockItems = estoque.filter(item => item.quantidade <= item.quantidade_minima);
+
         return {
             totalExchanges,
             totalPrinters: printers.length,
             totalDepartments: depts.length,
             exchangesByDept,
             exchangesByPrinter,
-            recentExchanges
+            recentExchanges,
+            lowStockItems
         };
     }
 };

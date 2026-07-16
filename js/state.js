@@ -8,6 +8,7 @@ export const state = {
     printers: [],
     exchanges: [],
     users: [],
+    estoque: [],
     stats: {},
     currentUser: null // Sessão do usuário logado
 };
@@ -101,4 +102,17 @@ export function initDOM() {
     DOM.formUserLevel = document.getElementById('form-user-level');
     DOM.navItemUsuarios = document.getElementById('nav-item-usuarios');
     DOM.sidebarItemUsuarios = document.getElementById('sidebar-item-usuarios');
+
+    // Estoque
+    DOM.estoqueTableBody = document.getElementById('estoque-table-body');
+    DOM.btnAddEstoque = document.getElementById('btn-add-estoque');
+    DOM.formEstoque = document.getElementById('form-estoque');
+    DOM.formEstoqueId = document.getElementById('form-estoque-id');
+    DOM.formEstoqueNome = document.getElementById('form-estoque-nome');
+    DOM.formEstoqueCategoria = document.getElementById('form-estoque-categoria');
+    DOM.formEstoqueQuantidade = document.getElementById('form-estoque-quantidade');
+    DOM.formEstoqueMinima = document.getElementById('form-estoque-minima');
+
+    // Dashboard: Alertas de Estoque
+    DOM.lowStockAlertContainer = document.getElementById('low-stock-alert-container');
 }

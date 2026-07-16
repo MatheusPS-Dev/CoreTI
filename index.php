@@ -18,6 +18,8 @@
 
         <?php include 'includes/sections/impressoras.php'; ?>
 
+        <?php include 'includes/sections/estoque.php'; ?>
+
         <?php include 'includes/sections/trocas.php'; ?>
 
         <?php include 'includes/sections/usuarios.php'; ?>
@@ -31,6 +33,8 @@
     <?php include 'includes/modals/modal_printer.php'; ?>
 
     <?php include 'includes/modals/modal_exchange.php'; ?>
+
+    <?php include 'includes/modals/modal_estoque.php'; ?>
 
     <?php include 'includes/modals/modal_user.php'; ?>
 

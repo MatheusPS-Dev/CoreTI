@@ -67,6 +67,19 @@ try {
     ');
     $messages[] = '✅ Tabela "usuarios" criada com sucesso.';
 
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS estoque (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(255) NOT NULL UNIQUE,
+            quantidade INT NOT NULL DEFAULT 0,
+            quantidade_minima INT NOT NULL DEFAULT 2,
+            categoria VARCHAR(100) DEFAULT \'\',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ');
+    $messages[] = '✅ Tabela "estoque" criada com sucesso.';
+
     // Inserir usuário Admin padrão se não existir nenhum
     $countUsers = (int)$db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
     if ($countUsers === 0) {
@@ -139,6 +152,18 @@ try {
             $stmtExchange->execute($e);
         }
         $messages[] = '✅ Histórico de trocas de demonstração inserido.';
+
+        // Inserir estoque de demonstração
+        $db->exec("
+            INSERT INTO estoque (nome, quantidade, quantidade_minima, categoria) VALUES
+            ('Toner CF258X (58X)', 5, 2, 'Toner'),
+            ('Toner TN760', 1, 2, 'Toner'),
+            ('Papel A4 (Resma)', 10, 5, 'Papel'),
+            ('Toner 51B4000', 0, 3, 'Toner'),
+            ('Toner MLT-D111S', 8, 2, 'Toner'),
+            ('Toner TK-1175', 3, 2, 'Toner')
+        ");
+        $messages[] = '✅ Estoque de demonstração inserido.';
 
     } else {
         $messages[] = 'ℹ️ O banco já contém dados. Seed de demonstração pulado.';

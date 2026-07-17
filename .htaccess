@@ -20,8 +20,9 @@ DirectoryIndex index.php
 # Cache de arquivos estaticos (performance)
 <IfModule mod_expires.c>
     ExpiresActive On
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
+    # Desativado cache para CSS e JS em desenvolvimento para evitar problemas de atualização
+    # ExpiresByType text/css "access plus 1 month"
+    # ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType image/png "access plus 1 month"
     ExpiresByType image/svg+xml "access plus 1 month"
 </IfModule>

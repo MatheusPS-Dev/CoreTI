@@ -62,6 +62,12 @@ const INITIAL_ESTOQUE = [
     { id: 6, nome: 'Toner TK-1175', quantidade: 3, quantidade_minima: 2, categoria: 'Toner' }
 ];
 
+const INITIAL_ANYDESK = [
+    { id: 1, nome_usuario: 'Carlos Mendes', ip_pc: '192.168.1.50', mac_address: 'AA:BB:CC:11:22:33', porta_patchpanel: 'P01', anydesk_codigo: '123 456 789' },
+    { id: 2, nome_usuario: 'Fernanda Lima', ip_pc: '192.168.1.51', mac_address: 'DD:EE:FF:44:55:66', porta_patchpanel: 'P02', anydesk_codigo: '987 654 321' },
+    { id: 3, nome_usuario: 'Roberto Alves', ip_pc: '192.168.1.52', mac_address: '11:22:33:AA:BB:CC', porta_patchpanel: 'P05', anydesk_codigo: '555 123 456' }
+];
+
 // Utilitários de Inicialização do LocalStorage
 function initLocalStorage() {
     if (!localStorage.getItem('toner_departamentos')) {
@@ -78,6 +84,9 @@ function initLocalStorage() {
     }
     if (!localStorage.getItem('toner_estoque')) {
         localStorage.setItem('toner_estoque', JSON.stringify(INITIAL_ESTOQUE));
+    }
+    if (!localStorage.getItem('toner_anydesk')) {
+        localStorage.setItem('toner_anydesk', JSON.stringify(INITIAL_ANYDESK));
     }
 }
 
@@ -611,5 +620,83 @@ export const db = {
             recentExchanges,
             lowStockItems
         };
+    },
+
+    // --- ANYDESK PCs ---
+    getAnyDeskPcs: async function() {
+        if (USE_API) {
+            try {
+                return await apiRequest(`${API_BASE}/anydesk.php`);
+            } catch (error) {
+                console.error("Erro na API de AnyDesk, usando LocalStorage como fallback", error);
+                initLocalStorage();
+                return JSON.parse(localStorage.getItem('toner_anydesk'));
+            }
+        } else {
+            return JSON.parse(localStorage.getItem('toner_anydesk') || '[]');
+        }
+    },
+
+    addAnyDeskPc: async function(pc) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/anydesk.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pc)
+            });
+        } else {
+            const pcs = JSON.parse(localStorage.getItem('toner_anydesk') || '[]');
+            const newId = pcs.length > 0 ? Math.max(...pcs.map(p => p.id)) + 1 : 1;
+            const newPc = {
+                id: newId,
+                nome_usuario: pc.nome_usuario,
+                ip_pc: pc.ip_pc,
+                mac_address: pc.mac_address,
+                porta_patchpanel: pc.porta_patchpanel,
+                anydesk_codigo: pc.anydesk_codigo
+            };
+            pcs.push(newPc);
+            localStorage.setItem('toner_anydesk', JSON.stringify(pcs));
+            return newPc;
+        }
+    },
+
+    updateAnyDeskPc: async function(id, pc) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/anydesk.php?id=${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pc)
+            });
+        } else {
+            const pcs = JSON.parse(localStorage.getItem('toner_anydesk') || '[]');
+            const index = pcs.findIndex(p => p.id === parseInt(id));
+            if (index !== -1) {
+                pcs[index] = {
+                    id: parseInt(id),
+                    nome_usuario: pc.nome_usuario,
+                    ip_pc: pc.ip_pc,
+                    mac_address: pc.mac_address,
+                    porta_patchpanel: pc.porta_patchpanel,
+                    anydesk_codigo: pc.anydesk_codigo
+                };
+                localStorage.setItem('toner_anydesk', JSON.stringify(pcs));
+                return pcs[index];
+            }
+            throw new Error("Computador não encontrado");
+        }
+    },
+
+    deleteAnyDeskPc: async function(id) {
+        if (USE_API) {
+            return await apiRequest(`${API_BASE}/anydesk.php?id=${id}`, {
+                method: 'DELETE'
+            });
+        } else {
+            const pcs = JSON.parse(localStorage.getItem('toner_anydesk') || '[]');
+            const filtered = pcs.filter(p => p.id !== parseInt(id));
+            localStorage.setItem('toner_anydesk', JSON.stringify(filtered));
+            return { success: true };
+        }
     }
 };

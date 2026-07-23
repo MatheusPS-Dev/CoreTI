@@ -24,6 +24,8 @@
 
         <?php include 'includes/sections/usuarios.php'; ?>
 
+        <?php include 'includes/sections/anydesk.php'; ?>
+
     </main>
 
     <!-- ==================== MODALS ==================== -->
@@ -37,6 +39,8 @@
     <?php include 'includes/modals/modal_estoque.php'; ?>
 
     <?php include 'includes/modals/modal_user.php'; ?>
+
+    <?php include 'includes/modals/modal_anydesk.php'; ?>
 
     <?php include 'includes/footer.php'; ?>
 

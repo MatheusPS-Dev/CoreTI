@@ -26,6 +26,9 @@
             <a href="#" class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-colors hidden" id="sidebar-item-usuarios" data-target="usuarios">
                 <span class="material-symbols-outlined" style="font-size:20px">admin_panel_settings</span> Usuários
             </a>
+            <a href="#" class="menu-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-colors" data-target="anydesk">
+                <span class="material-symbols-outlined" style="font-size:20px">desktop_windows</span> AnyDesk
+            </a>
         </nav>
         
         <div class="mt-auto px-6 py-4 border-t border-outline-variant/30">

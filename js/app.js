@@ -16,6 +16,7 @@ import { renderPrinters, setupImpressorasEvents } from './modules/impressoras.js
 import { renderExchanges, setupTrocasEvents } from './modules/trocas.js';
 import { renderUsers, setupUsuariosEvents } from './modules/usuarios.js';
 import { renderEstoque, setupEstoqueEvents } from './modules/estoque.js';
+import { renderAnydesk, setupAnydeskEvents } from './modules/anydesk.js';
 
 // =========================================================================
 // INICIALIZAÇÃO DA APLICAÇÃO
@@ -59,6 +60,7 @@ async function refreshData() {
         state.printers = await db.getPrinters();
         state.exchanges = await db.getExchanges();
         state.estoque = await db.getEstoque();
+        state.anydesk_pcs = await db.getAnyDeskPcs();
         state.stats = await db.getDashboardStats();
 
         // Se for admin, carregar também os usuários do sistema
@@ -110,6 +112,9 @@ function renderTabContent(tabName) {
         case 'estoque':
             renderEstoque();
             break;
+        case 'anydesk':
+            renderAnydesk();
+            break;
     }
 }
 
@@ -127,4 +132,5 @@ function setupAllEvents() {
     setupTrocasEvents(onDataChanged);
     setupUsuariosEvents(onDataChanged);
     setupEstoqueEvents(onDataChanged);
+    setupAnydeskEvents(onDataChanged);
 }

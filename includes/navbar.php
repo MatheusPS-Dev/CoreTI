@@ -28,6 +28,9 @@
                 <a href="#" class="menu-item h-full flex items-center px-4 font-label-sm text-label-sm text-surface-variant hover:text-primary-fixed-dim transition-colors duration-150 hidden" id="nav-item-usuarios" data-target="usuarios">
                     <span>Usuários</span>
                 </a>
+                <a href="#" class="menu-item h-full flex items-center px-4 font-label-sm text-label-sm text-surface-variant hover:text-primary-fixed-dim transition-colors duration-150" data-target="anydesk">
+                    <span>AnyDesk</span>
+                </a>
             </div>
 
             <!-- Right: User session + Status + Actions -->

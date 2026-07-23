@@ -80,6 +80,19 @@ try {
     ');
     $messages[] = '✅ Tabela "estoque" criada com sucesso.';
 
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS anydesk_pcs (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome_usuario VARCHAR(255) NOT NULL,
+            ip_pc VARCHAR(45) NOT NULL,
+            mac_address VARCHAR(50) NOT NULL,
+            porta_patchpanel VARCHAR(50) NOT NULL,
+            anydesk_codigo VARCHAR(20) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ');
+    $messages[] = '✅ Tabela "anydesk_pcs" criada com sucesso.';
+
     // Inserir usuário Admin padrão se não existir nenhum
     $countUsers = (int)$db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
     if ($countUsers === 0) {
@@ -164,6 +177,18 @@ try {
             ('Toner TK-1175', 3, 2, 'Toner')
         ");
         $messages[] = '✅ Estoque de demonstração inserido.';
+
+        // Inserir computadores AnyDesk de demonstração
+        $countAnydesk = (int)$db->query('SELECT COUNT(*) FROM anydesk_pcs')->fetchColumn();
+        if ($countAnydesk === 0) {
+            $db->exec("
+                INSERT INTO anydesk_pcs (nome_usuario, ip_pc, mac_address, porta_patchpanel, anydesk_codigo) VALUES
+                ('Carlos Mendes', '192.168.1.50', 'AA:BB:CC:11:22:33', 'P01', '123 456 789'),
+                ('Fernanda Lima', '192.168.1.51', 'DD:EE:FF:44:55:66', 'P02', '987 654 321'),
+                ('Roberto Alves', '192.168.1.52', '11:22:33:AA:BB:CC', 'P05', '555 123 456')
+            ");
+            $messages[] = '✅ Computadores AnyDesk de demonstração inseridos.';
+        }
 
     } else {
         $messages[] = 'ℹ️ O banco já contém dados. Seed de demonstração pulado.';

@@ -9,6 +9,7 @@ export const state = {
     exchanges: [],
     users: [],
     estoque: [],
+    anydesk_pcs: [],
     stats: {},
     currentUser: null // Sessão do usuário logado
 };
@@ -115,4 +116,16 @@ export function initDOM() {
 
     // Dashboard: Alertas de Estoque
     DOM.lowStockAlertContainer = document.getElementById('low-stock-alert-container');
+
+    // AnyDesk
+    DOM.anydeskTableBody = document.getElementById('anydesk-table-body');
+    DOM.btnAddAnydesk = document.getElementById('btn-add-anydesk');
+    DOM.formAnydesk = document.getElementById('form-anydesk');
+    DOM.formAnydeskId = document.getElementById('form-anydesk-id');
+    DOM.formAnydeskUsuario = document.getElementById('form-anydesk-usuario');
+    DOM.formAnydeskIp = document.getElementById('form-anydesk-ip');
+    DOM.formAnydeskMac = document.getElementById('form-anydesk-mac');
+    DOM.formAnydeskPorta = document.getElementById('form-anydesk-porta');
+    DOM.formAnydeskCodigo = document.getElementById('form-anydesk-codigo');
+    DOM.anydeskSearchInput = document.getElementById('anydesk-search-input');
 }
